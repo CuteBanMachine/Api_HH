@@ -11,6 +11,8 @@ class Vacancy(BaseModel):
     name: str
     salary_from: Optional[int]
     salary_to: Optional[int]
+    frequency_id: Optional[str]
+    currency: Optional[str]
     region: str
     organization: str
     published_at: datetime
@@ -46,10 +48,13 @@ def process_vacancies(raw_vacancies):
 
     for item in raw_vacancies:
         salary = item.get('salary')
+        frequency = item.get('salary_range')
         vacancy = Vacancy(
             name=item.get('name'),
             salary_from=salary.get('from') if salary else None,
             salary_to=salary.get('to') if salary else None,
+            frequency_id=frequency.get('mode').get('id') if frequency else None,
+            currency=frequency.get('currency') if frequency else None,
             region=item.get('area', {}).get('name'),
             organization=item.get('employer', {}).get('name'),
             published_at=item.get('published_at'),
@@ -66,11 +71,11 @@ def analyze(vacancies):
     print(f"\nВсего вакансий: {len(df)}")
     print(f"Уникальных работодателей: {df['organization'].nunique()}")
 
-    # Средняя зарплата, если указаны обе границы
-    df_salary = df.dropna(subset=['salary_from', 'salary_to']).copy()
+    df_freq = df[(df['frequency_id'] == 'MONTH') & (df['currency'] == "RUR")].copy()
+    df_salary = df_freq.dropna(subset=['salary_from', 'salary_to']).copy()
     df_salary['salary_from_to'] = (df_salary['salary_from'] + df_salary['salary_to']) / 2
 
-    print(f"Вакансий с полной ЗП: {len(df_salary)}")
+    print(f"Вакансий с полной ЗП в месяц в рублях: {len(df_salary)}")
 
     # График
     print('\nГрафик')
