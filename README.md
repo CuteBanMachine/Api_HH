@@ -1,4 +1,4 @@
-#Задание для Василия!
+# Задание для Василия!
 ```
 python -m venv venv
 ```
@@ -8,9 +8,9 @@ venv\Scripts\activate
 ```
 pip install requests pandas matplotlib seaborn pydantic  
 ```
-```
-(pip install -r requirements.txt)
-```
+
+(Необязательно pip install -r requirements.txt)
+
 ```
 python main.py
 ```
